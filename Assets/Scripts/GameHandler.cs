@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.SceneManagement;
+using UnityEditor;
 
 namespace CardFindingGame
 {
@@ -19,8 +21,11 @@ namespace CardFindingGame
         private int createdCardCount;
         private int guessCounter;
 
+        private bool isCardSelectionInputLocked;
+
         void Start()
         {
+            isCardSelectionInputLocked = true;
             speakingPanel.Init();
             createdCardCount = 0;
             guessCounter = 0;
@@ -34,6 +39,20 @@ namespace CardFindingGame
 
         private void ControlInput()
         {
+            if (Input.GetKeyDown(KeyCode.Space))
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+#if UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (EditorApplication.isPlaying)
+                {
+                    UnityEditor.EditorApplication.isPlaying = false;
+                }
+            }
+#endif
+
+            
+
             if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
@@ -42,8 +61,12 @@ namespace CardFindingGame
                 {
                     if (hit.collider.gameObject.CompareTag("GambleCard"))
                     {
+                        if (isCardSelectionInputLocked)
+                            return;
+
                         GambleCard gambleCard = hit.collider.gameObject.GetComponent<GambleCard>();
                         gambleCard.TurnCardToFront();
+                        OnCardSelected(gambleCard.cardType);
                     }
                     else if (hit.collider.gameObject.CompareTag("Gambler"))
                     {
@@ -76,6 +99,12 @@ namespace CardFindingGame
             }
         }
 
+        private void OnShuffleCompleted()
+        {
+            shuffleManager.OnShuffleCompleted -= OnShuffleCompleted;
+            isCardSelectionInputLocked = false;
+        }
+
         private void OnCardSpawnFinished(GambleCard gambleCard)
         {
             gambleCard.OnCardSpawnFinished -= OnCardSpawnFinished;
@@ -84,6 +113,7 @@ namespace CardFindingGame
             if(createdCardCount == totalCardCount)
             {
                 shuffleManager.Init(this);
+                shuffleManager.OnShuffleCompleted += OnShuffleCompleted;
                 shuffleManager.ShuffleCards(createdCards);
             }
         }
@@ -135,7 +165,6 @@ namespace CardFindingGame
                     }
                 }
             }
-
             return cardSpawnPosList.OrderBy(x => Random.value).ToList();
         }
 
@@ -161,12 +190,15 @@ namespace CardFindingGame
 
         private void OnLevelSucceeded()
         {
-
+            Debug.Log("Success");
+            isCardSelectionInputLocked = true;
         }
 
         private void OnLevelFailed()
         {
-          
+            Debug.Log("Fail");
+
+            isCardSelectionInputLocked = true;
         }
 
         private IEnumerator CR_CreateCards()
@@ -198,6 +230,10 @@ namespace CardFindingGame
             }
         }
 
+        private void OnDestroy()
+        {
+            shuffleManager.OnShuffleCompleted -= OnShuffleCompleted;
+        }
     }
 }
 

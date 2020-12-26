@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace CardFindingGame
 {
     public class CardShuffleManager : MonoBehaviour
-    { 
+    {
+        public UnityAction OnShuffleCompleted;
+
         [HideInInspector] public GameHandler gameHandler;
         private int shuffleCount = 20;
         private bool isCurrentShuffleCompleted;
@@ -24,7 +27,7 @@ namespace CardFindingGame
 
         private IEnumerator CR_ShuffleCards(List<GambleCard> gambleCards)
         {
-            yield return new WaitForSeconds(0.5f / gameHandler.CardGameDataManager.CardGameData.shuffleSpeed);
+            yield return new WaitForSeconds(0.2f);
             for(int i = 0; i< shuffleCount; i++)
             {
                 isCurrentShuffleCompleted = false;
@@ -50,6 +53,8 @@ namespace CardFindingGame
 
                 yield return new WaitUntil(()=>isCurrentShuffleCompleted);
             }
+
+            OnShuffleCompleted?.Invoke();
         }
 
         private void OnCardAtSendedPosition(GambleCard gambleCard)

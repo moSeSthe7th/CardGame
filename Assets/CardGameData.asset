@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 295a89f6d01930044acab713a3e10bd8, type: 3}
   m_Name: CardGameData
   m_EditorClassIdentifier: 
-  gameDifficulty: 2
-  shuffleSpeed: 20
+  gameDifficulty: 0
+  shuffleSpeed: 3
+  guessChanceCount: 1
+  requiredSuccessfulSelectionCount: 1
   middleBiddingThreshold: 20
   maxBiddingThreshold: 40
   minShuffleSpeed: 3
-  middleShuffleSpeed: 10
-  maxShuffleSpeed: 20
+  middleShuffleSpeed: 5
+  maxShuffleSpeed: 7
