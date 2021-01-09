@@ -51,6 +51,7 @@ namespace CardFindingGame
             
         }
 
+
         private void SelectCardSprite()
         {
             if(cardType == CardType.Dark)
@@ -61,6 +62,12 @@ namespace CardFindingGame
             {
                 cardFace.sprite = lightSprites[Random.Range(0, lightSprites.Count)];
             }
+        }
+
+        public void ChangeCardType(CardType type)
+        {
+            cardType = type;
+            SelectCardSprite();
         }
 
         public void TurnCardToFront()

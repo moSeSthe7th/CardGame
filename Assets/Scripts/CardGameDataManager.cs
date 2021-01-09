@@ -50,9 +50,63 @@ namespace CardFindingGame
             return CardGameData.gameDifficulty;
         }
 
-        public void SetDifficulty(GameDifficulty difficulty)
+        public void SetDifficulty(int difficulty)
         {
-            CardGameData.gameDifficulty = difficulty;
+            if ((GameDifficulty)difficulty == GameDifficulty.Easy)
+                CardGameData.currentRatio = CardGameData.easyRatio;
+            else if ((GameDifficulty)difficulty == GameDifficulty.Medium)
+                CardGameData.currentRatio = CardGameData.mediumRatio;
+            else if ((GameDifficulty)difficulty == GameDifficulty.Hard)
+                CardGameData.currentRatio = CardGameData.hardRatio;
+
+            CardGameData.gameDifficulty = (GameDifficulty)difficulty;
+        }
+
+        public void OnGameWon()
+        {
+            CardGameData.wonHandsCount++;
+            if(CardGameData.maxShuffleSpeed < CardGameData.maxPossibleShuffleSpeed)
+            {
+                CardGameData.minShuffleSpeed++;
+                CardGameData.middleShuffleSpeed++;
+                CardGameData.maxShuffleSpeed++;
+            }
+        }
+
+        public void SetGamblersMoney(float money)
+        {
+            CardGameData.gamblersMoney = money;
+        }
+
+        public float GetGamblersMoney()
+        {
+            return CardGameData.gamblersMoney;
+        }
+
+        public float GetRatio()
+        {
+            return CardGameData.currentRatio;
+        }
+
+        public int GetStealingPossibility()
+        {
+            return CardGameData.currentStealPossibility;
+        }
+
+        public void SetStealingPossibility()
+        {
+            if (CardGameData.wonHandsCount < CardGameData.minRequiredWinsForSteal)
+            {
+                CardGameData.currentStealPossibility = 0;
+                return;
+            }
+
+            int possibility = ((CardGameData.wonHandsCount - CardGameData.minRequiredWinsForSteal) * CardGameData.stealPossibilityIncrease) + CardGameData.startStealPossibility;
+
+            if (possibility > CardGameData.maxStealPossibility)
+                possibility = CardGameData.maxStealPossibility;
+
+            CardGameData.currentStealPossibility = possibility;
         }
         
     }

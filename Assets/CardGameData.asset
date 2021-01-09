@@ -19,5 +19,17 @@ MonoBehaviour:
   middleBiddingThreshold: 20
   maxBiddingThreshold: 40
   minShuffleSpeed: 3
-  middleShuffleSpeed: 5
-  maxShuffleSpeed: 7
+  middleShuffleSpeed: 4
+  maxShuffleSpeed: 5
+  maxPossibleShuffleSpeed: 9
+  easyRatio: 2
+  mediumRatio: 3
+  hardRatio: 4
+  currentRatio: 2
+  minRequiredWinsForSteal: 5
+  startStealPossibility: 30
+  maxStealPossibility: 90
+  stealPossibilityIncrease: 10
+  currentStealPossibility: 90
+  gamblersMoney: 12
+  wonHandsCount: 12

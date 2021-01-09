@@ -12,9 +12,12 @@ namespace CardFindingGame
         private CardGameDataManager _cardGameDataManager;
         public CardGameDataManager CardGameDataManager => _cardGameDataManager ?? (_cardGameDataManager = GetComponent<CardGameDataManager>());
 
+        public static GameHandler instance;
+
         [SerializeField] private GambleCard gambleCardPrefab;
         [SerializeField] private NPCSpeakingPanel speakingPanel;
         [SerializeField] private CardShuffleManager shuffleManager;
+        [SerializeField] private Gambler gambler;
 
         private List<GambleCard> createdCards;
         private int totalCardCount;
@@ -23,13 +26,39 @@ namespace CardFindingGame
 
         private bool isCardSelectionInputLocked;
 
+        void Awake()
+        {
+
+            // if it doesn't exist
+            if (instance == null)
+            {
+                print("assigning GameManager instance");
+                // Set the instance to the current object (this)
+                instance = this;
+            }
+
+            // There can only be a single instance of the game manager
+            else if (instance != this)
+            {
+                print("GameManager instance already exists");
+                // Destroy the current object, so there is just one manager
+                Destroy(gameObject);
+                return;
+            }
+            
+
+        }
+
         void Start()
         {
             isCardSelectionInputLocked = true;
             speakingPanel.Init();
+            gambler.Init();
             createdCardCount = 0;
             guessCounter = 0;
             createdCards = new List<GambleCard>();
+            speakingPanel.OnDifficultySelected += CardGameDataManager.SetDifficulty;
+            speakingPanel.OnBidButtonPresed += OnBidMade;
         }
         
         void Update()
@@ -65,16 +94,17 @@ namespace CardFindingGame
                             return;
 
                         GambleCard gambleCard = hit.collider.gameObject.GetComponent<GambleCard>();
-                        gambleCard.TurnCardToFront();
+                        gambler.TurnCardToFront(gambleCard);
                         OnCardSelected(gambleCard.cardType);
                     }
-                    else if (hit.collider.gameObject.CompareTag("Gambler"))
+
+                    /*else if (hit.collider.gameObject.CompareTag("Gambler"))
                     {
                         Gambler gambler = hit.collider.gameObject.GetComponent<Gambler>();
                         gambler.CloseGamblerCollider();
                         speakingPanel.OpenPanel();
                         speakingPanel.OnBidButtonPresed += OnBidMade;
-                    }
+                    }*/
                 }
             }
         }
@@ -190,14 +220,14 @@ namespace CardFindingGame
 
         private void OnLevelSucceeded()
         {
-            Debug.Log("Success");
+            CardGameDataManager.OnGameWon();
             isCardSelectionInputLocked = true;
         }
 
         private void OnLevelFailed()
         {
             Debug.Log("Fail");
-
+            CardGameDataManager.CardGameData.wonHandsCount = 0;
             isCardSelectionInputLocked = true;
         }
 

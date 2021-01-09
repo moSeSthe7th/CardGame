@@ -1,20 +1,43 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace CardFindingGame
 {
     public class Gambler : MonoBehaviour
     {
-        [SerializeField] private Transform speechBubblesParent;
+        public UnityAction OnCardStolen;
 
-        private Collider2D _collider;
-        private Collider2D gamblerCollider => _collider ?? (_collider = GetComponent<Collider2D>());
+        private int stealPossibility;
+        private CardGameDataManager CardGameDataManager;
 
-        public void CloseGamblerCollider()
+        private bool isStealingActive;
+
+        public void Init()
         {
-            gamblerCollider.enabled = false;
+            CardGameDataManager = GameHandler.instance.CardGameDataManager;
+            isStealingActive = false;
+            CardGameDataManager.SetStealingPossibility();
+            stealPossibility = CardGameDataManager.GetStealingPossibility();
+
+            int randomNum = Random.Range(1, 101);
+            if (randomNum < stealPossibility)
+                isStealingActive = true;
         }
+
+        public void TurnCardToFront(GambleCard gambleCard)
+        {
+            if (isStealingActive && gambleCard.cardType == CardType.Dark)
+            {
+                gambleCard.ChangeCardType(CardType.Light);
+                Debug.Log("Stolen");
+                OnCardStolen?.Invoke();
+            }
+
+            gambleCard.TurnCardToFront();
+        }
+
 
     }
 }
