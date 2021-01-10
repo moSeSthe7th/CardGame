@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: CardGameData
   m_EditorClassIdentifier: 
   gameDifficulty: 0
-  shuffleSpeed: 3
+  shuffleSpeed: 9
   guessChanceCount: 1
   requiredSuccessfulSelectionCount: 1
-  middleBiddingThreshold: 20
-  maxBiddingThreshold: 40
+  gamblersMoney: 12
+  wonHandsCount: 12
+  middleBiddingThreshold: 4
+  maxBiddingThreshold: 8
   minShuffleSpeed: 3
-  middleShuffleSpeed: 4
-  maxShuffleSpeed: 5
+  middleShuffleSpeed: 9
+  maxShuffleSpeed: 16
   maxPossibleShuffleSpeed: 9
   easyRatio: 2
   mediumRatio: 3
@@ -31,5 +33,3 @@ MonoBehaviour:
   maxStealPossibility: 90
   stealPossibilityIncrease: 10
   currentStealPossibility: 90
-  gamblersMoney: 12
-  wonHandsCount: 12
